@@ -1,0 +1,6 @@
+@InterviewTaskWebApi.Api_HostAddress = http://localhost:5215
+
+GET {{InterviewTaskWebApi.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
