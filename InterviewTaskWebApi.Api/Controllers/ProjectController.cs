@@ -51,8 +51,12 @@ namespace InterviewTaskWebApi.Api.Controllers
         {
             try
             {
-                _projectServise.Insert(project);
-                return Ok(new { message = "Added Project Successfully" });
+                string result = _projectServise.Insert(project);
+                if (result == "Success")
+                {
+                    return Ok(new { message = "Added Project Successfully" });
+                }
+                else return BadRequest(result);
             }
             catch (Exception ex)
             {

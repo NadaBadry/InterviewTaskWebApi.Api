@@ -1,5 +1,6 @@
 ﻿using InterviewTaskWebApi.Application.Dto.Projects;
 using InterviewTaskWebApi.Application.IServices;
+using InterviewTaskWebApi.Application.Validation;
 using InterviewTaskWebApi.Domain.Models;
 using InterviewTaskWebApi.Domain.Repositories;
 
@@ -75,8 +76,16 @@ namespace InterviewTaskWebApi.Application.Services
 
         }
 
-        public void Insert(CreateProjectDto dto)
+        public string Insert(CreateProjectDto dto)
         {
+            var validator = new ProjectValidation();
+            var validationResult = validator.Validate(dto);
+
+            if (!validationResult.IsValid)
+            {
+                return string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var project = new Project
             {
                 Id = Guid.NewGuid(),
@@ -89,10 +98,17 @@ namespace InterviewTaskWebApi.Application.Services
             };
             if (project.EndDate < project.StartDate)
             {
-                throw new ArgumentException("End date mustt be greater thsn start date");
+                return ("End date must be greater thsn start date");
+            }
+            if (project.StartDate < DateTime.Today)
+            {
+                /*throw new ArgumentException*/
+                return ("start date must be tomorrow or the future");
+
             }
             _projectRepository.Insert(project);
             _projectRepository.Save();
+            return "Success";
 
         }
 

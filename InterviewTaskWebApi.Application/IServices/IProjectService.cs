@@ -6,7 +6,7 @@ namespace InterviewTaskWebApi.Application.IServices
     {
         IEnumerable<ProjectDto> GetProjects(int pagenumber, int pagesize);
         ProjectDto GetById(Guid id);
-        void Insert(CreateProjectDto entity);
+        string Insert(CreateProjectDto entity);
         void Update(Guid id, UpdateProject entity);
         void UpdateProjectStatus(Guid id);
         public bool ArchivedProject(Guid id);

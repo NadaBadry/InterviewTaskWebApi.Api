@@ -1,5 +1,6 @@
 ﻿using InterviewTaskWebApi.Application.Dto.Tasks;
 using InterviewTaskWebApi.Application.IServices;
+using InterviewTaskWebApi.Application.Validation;
 using InterviewTaskWebApi.Domain.Models;
 using InterviewTaskWebApi.Domain.Repositories;
 
@@ -9,10 +10,12 @@ namespace InterviewTaskWebApi.Application.Services
     {
         private readonly ITaskRepository _taskRepository;
         private readonly IProjectRepository _projectRepository;
-        public TaskService(ITaskRepository taskRepository, IProjectRepository projectRepository)
+        private readonly IProjectService _projectService;
+        public TaskService(ITaskRepository taskRepository, IProjectRepository projectRepository, IProjectService projectService)
         {
             _taskRepository = taskRepository;
             _projectRepository = projectRepository;
+            _projectService = projectService;
         }
 
 
@@ -57,6 +60,14 @@ namespace InterviewTaskWebApi.Application.Services
 
         public string Insert(CreateTask task)
         {
+            var validator = new TaskValidation();
+            var validationResult = validator.Validate(task);
+
+            if (!validationResult.IsValid)
+            {
+                return string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var p = _projectRepository.GetById(task.ProjectId);
 
             if (p == null)
@@ -87,7 +98,7 @@ namespace InterviewTaskWebApi.Application.Services
             }
             else
             {
-                return "DueDate Must between StartDate and EndDate";
+                return "Task DueDate Must be between StartDate and EndDate";
             }
         }
 
@@ -96,8 +107,10 @@ namespace InterviewTaskWebApi.Application.Services
             var task = _taskRepository.GetById(id);
             if (task == null) return false;
             task.Status = TaskStatus.Done;
+
             _taskRepository.Update(task);
             _taskRepository.Save();
+            _projectService.UpdateProjectStatus(task.ProjectId);
             return true;
         }
 

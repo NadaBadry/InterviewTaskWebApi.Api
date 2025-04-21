@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public enum ProjectStatus
 {
@@ -11,6 +12,7 @@ namespace InterviewTaskWebApi.Domain.Models
     public class Project
     {
         public Guid Id { get; set; }
+        [Required(ErrorMessage = "Project Title Must Not Be Empty")]
         public string Title { get; set; }
         public string? Description { get; set; }
         [NotMapped]//it is calculated
@@ -33,6 +35,6 @@ namespace InterviewTaskWebApi.Domain.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ProjectStatus Status { get; set; }
-        public List<TaskModel> Tasks { get; set; }= new List<TaskModel>();
+        public List<TaskModel> Tasks { get; set; } = new List<TaskModel>();
     }
 }

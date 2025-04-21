@@ -1,4 +1,6 @@
-﻿public enum TaskStatus
+﻿using System.ComponentModel.DataAnnotations;
+
+public enum TaskStatus
 {
     ToDo,//0
     InProgress,//1
@@ -15,12 +17,14 @@ namespace InterviewTaskWebApi.Domain.Models
     public class TaskModel
     {
         public Guid Id { get; set; }
+
+        [Required(ErrorMessage = "Task Title Must Not Be Empty")]
         public string Title { get; set; }
         public string? Description { get; set; }
         public DateTime DueDte { get; set; }
         public TaskStatus Status { get; set; }
         public TaskPriority priority { get; set; }
-        public Guid ProjectId {  get; set; }
+        public Guid ProjectId { get; set; }
         public Project Project { get; set; }
     }
 }
